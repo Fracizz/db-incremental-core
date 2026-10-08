@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nem-db-incremental-core"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Reusable MySQL/MariaDB incremental backup and restore planning"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["mysql", "mariadb", "binlog", "backup", "restore"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Topic :: Database",
+]
+
+[project.urls]
+Repository = "https://github.com/Fracizz/nem-db-incremental-core"
+Issues = "https://github.com/Fracizz/nem-db-incremental-core/issues"
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+
+# 开发和构建依赖统一使用国内源，运行时核心仅依赖 Python 标准库。
+[[tool.uv.index]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+default = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+pythonpath = ["src"]

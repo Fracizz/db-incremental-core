@@ -127,12 +127,6 @@ uv build --wheel --sdist
 
 When reporting an issue, include your Python version and a reproducible, sanitized example. Do not submit passwords, tokens, connection strings, or real business data.
 
-## Migrating from v0.1.0
-
-Version 0.1.1 renames the distribution from `nem-db-incremental-core` to `db-incremental-core` and the Python import from `nem_db_incremental_core` to `db_incremental_core`. Update your dependency declarations and imports when upgrading. The planning API and behavior are unchanged.
-
-The existing v0.1.0 release assets retain their original names and checksums.
-
 ## License
 
 [MIT](LICENSE) © 2026 Fracizz

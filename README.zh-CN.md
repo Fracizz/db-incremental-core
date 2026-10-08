@@ -127,12 +127,6 @@ uv build --wheel --sdist
 
 报告问题时请提供 Python 版本和可复现的脱敏样例，不提交密码、Token、连接串或真实业务数据。
 
-## 从 v0.1.0 迁移
-
-0.1.1 将发行包名从 `nem-db-incremental-core` 改为 `db-incremental-core`，Python 导入名从 `nem_db_incremental_core` 改为 `db_incremental_core`。升级时请更新依赖声明和导入语句；规划 API 和行为保持一致。
-
-已发布的 v0.1.0 附件保留原名称和校验值。
-
 ## 许可证
 
 [MIT](LICENSE) © 2026 Fracizz

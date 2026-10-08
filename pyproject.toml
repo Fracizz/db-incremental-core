@@ -3,8 +3,8 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nem-db-incremental-core"
-version = "0.1.0"
+name = "db-incremental-core"
+version = "0.1.1"
 requires-python = ">=3.11"
 description = "Reusable MySQL/MariaDB incremental backup and restore planning"
 readme = "README.md"
@@ -20,8 +20,8 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Fracizz/nem-db-incremental-core"
-Issues = "https://github.com/Fracizz/nem-db-incremental-core/issues"
+Repository = "https://github.com/Fracizz/db-incremental-core"
+Issues = "https://github.com/Fracizz/db-incremental-core/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]

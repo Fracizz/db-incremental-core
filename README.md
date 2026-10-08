@@ -1,4 +1,4 @@
-# nem-db-incremental-core
+# db-incremental-core
 
 **English** | [简体中文](README.zh-CN.md)
 
@@ -16,17 +16,17 @@ The library returns plans and arguments. The calling application handles databas
 
 ## Installation
 
-Download the wheel from [Releases](https://github.com/Fracizz/nem-db-incremental-core/releases), then install it:
+Download the wheel from [Releases](https://github.com/Fracizz/db-incremental-core/releases), then install it:
 
 ```bash
-python -m pip install --no-index ./nem_db_incremental_core-0.1.0-py3-none-any.whl
+python -m pip install --no-index ./db_incremental_core-0.1.1-py3-none-any.whl
 ```
 
 Alternatively, clone the repository and install from source. Build dependencies use the Aliyun PyPI mirror:
 
 ```bash
-git clone https://github.com/Fracizz/nem-db-incremental-core.git
-cd nem-db-incremental-core
+git clone https://github.com/Fracizz/db-incremental-core.git
+cd db-incremental-core
 python -m pip install --index-url https://mirrors.aliyun.com/pypi/simple/ .
 ```
 
@@ -35,7 +35,7 @@ Source code and packages are currently distributed through GitHub. The package i
 ## Incremental backup example
 
 ```python
-from nem_db_incremental_core import (
+from db_incremental_core import (
     BinlogPosition,
     build_binlog_read_args,
     plan_incremental_backup,
@@ -64,7 +64,7 @@ The caller must supply `available_files` in server binlog order. The planner rel
 ## Restore chain example
 
 ```python
-from nem_db_incremental_core import BackupPoint, BinlogPosition, plan_restore
+from db_incremental_core import BackupPoint, BinlogPosition, plan_restore
 
 baseline = BinlogPosition("mysql-bin.000001", 100)
 full = BackupPoint(
@@ -126,6 +126,12 @@ uv build --wheel --sdist
 ```
 
 When reporting an issue, include your Python version and a reproducible, sanitized example. Do not submit passwords, tokens, connection strings, or real business data.
+
+## Migrating from v0.1.0
+
+Version 0.1.1 renames the distribution from `nem-db-incremental-core` to `db-incremental-core` and the Python import from `nem_db_incremental_core` to `db_incremental_core`. Update your dependency declarations and imports when upgrading. The planning API and behavior are unchanged.
+
+The existing v0.1.0 release assets retain their original names and checksums.
 
 ## License
 

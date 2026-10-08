@@ -3,7 +3,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 
 import pytest
-from nem_db_incremental_core import (
+from db_incremental_core import (
     BackupPoint,
     BinlogPosition,
     IncrementalChainBrokenError,

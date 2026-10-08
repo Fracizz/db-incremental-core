@@ -1,4 +1,4 @@
-# nem-db-incremental-core
+# db-incremental-core
 
 [English](README.md) | **简体中文**
 
@@ -16,17 +16,17 @@ MySQL / MariaDB 增量备份与还原链的规划和校验库，从 NEMPanel（N
 
 ## 安装
 
-从本仓库的 [Releases](https://github.com/Fracizz/nem-db-incremental-core/releases) 下载 wheel 后安装：
+从本仓库的 [Releases](https://github.com/Fracizz/db-incremental-core/releases) 下载 wheel 后安装：
 
 ```bash
-python -m pip install --no-index ./nem_db_incremental_core-0.1.0-py3-none-any.whl
+python -m pip install --no-index ./db_incremental_core-0.1.1-py3-none-any.whl
 ```
 
 也可以克隆源码后安装。构建依赖使用阿里云源：
 
 ```bash
-git clone https://github.com/Fracizz/nem-db-incremental-core.git
-cd nem-db-incremental-core
+git clone https://github.com/Fracizz/db-incremental-core.git
+cd db-incremental-core
 python -m pip install --index-url https://mirrors.aliyun.com/pypi/simple/ .
 ```
 
@@ -35,7 +35,7 @@ python -m pip install --index-url https://mirrors.aliyun.com/pypi/simple/ .
 ## 增量规划示例
 
 ```python
-from nem_db_incremental_core import (
+from db_incremental_core import (
     BinlogPosition,
     build_binlog_read_args,
     plan_incremental_backup,
@@ -64,7 +64,7 @@ assert args == [
 ## 恢复链示例
 
 ```python
-from nem_db_incremental_core import BackupPoint, BinlogPosition, plan_restore
+from db_incremental_core import BackupPoint, BinlogPosition, plan_restore
 
 baseline = BinlogPosition("mysql-bin.000001", 100)
 full = BackupPoint(
@@ -126,6 +126,12 @@ uv build --wheel --sdist
 ```
 
 报告问题时请提供 Python 版本和可复现的脱敏样例，不提交密码、Token、连接串或真实业务数据。
+
+## 从 v0.1.0 迁移
+
+0.1.1 将发行包名从 `nem-db-incremental-core` 改为 `db-incremental-core`，Python 导入名从 `nem_db_incremental_core` 改为 `db_incremental_core`。升级时请更新依赖声明和导入语句；规划 API 和行为保持一致。
+
+已发布的 v0.1.0 附件保留原名称和校验值。
 
 ## 许可证
 

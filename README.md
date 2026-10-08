@@ -1,28 +1,28 @@
 # nem-db-incremental-core
 
-MySQL / MariaDB 增量备份与还原链的规划和校验库，从 NEMPanel（NEM运维平台）提取。支持 Python 3.11+，运行时仅依赖标准库。
+**English** | [简体中文](README.zh-CN.md)
 
-Framework-independent MySQL/MariaDB incremental backup and restore planning for Python 3.11+, with no runtime dependencies.
+Framework-independent MySQL/MariaDB incremental backup and restore planning, extracted from NEMPanel. Supports Python 3.11+ with no runtime dependencies.
 
-## 能力与边界
+## Features and scope
 
-- 从导出快照文本解析 binlog 坐标，避免使用事后查询的位置充当全量基线。
-- 固定增量区间 `[start, end)`，检查日志是否存在、坐标是否倒退及是否允许轮转。
-- 按增量次数、链龄和坐标状态决定执行增量或自动转全量。
-- 校验恢复链的全量根节点、父子关系、链 ID、源库、成功状态和连续坐标。
-- 为 MySQL / MariaDB 生成各自的 binlog 读取参数，不包含连接信息或凭据。
+- Parse binlog coordinates from dump snapshots instead of using a later server position as the full-backup baseline.
+- Plan a fixed incremental interval `[start, end)` and check log availability, coordinate order, and rotation policy.
+- Decide whether to use an incremental or full backup based on chain depth, age, and coordinate availability.
+- Validate restore chains: full-backup root, parent relationships, chain IDs, source database, successful status, and continuous coordinates.
+- Generate vendor-specific binlog reader arguments for MySQL and MariaDB without connection details or credentials.
 
-本库返回规划数据和参数，不连接数据库、不执行 mysqlbinlog、不读取归档、不还原 SQL。数据库连接、归档完整性检查、命令执行、权限、审计和任务记录由调用方负责。
+The library returns plans and arguments. The calling application handles database connections, archive integrity checks, command execution, authorization, auditing, and task records. The planner does not execute mysqlbinlog or restore SQL.
 
-## 安装
+## Installation
 
-从本仓库的 [Releases](https://github.com/Fracizz/nem-db-incremental-core/releases) 下载 wheel 后安装：
+Download the wheel from [Releases](https://github.com/Fracizz/nem-db-incremental-core/releases), then install it:
 
 ```bash
 python -m pip install --no-index ./nem_db_incremental_core-0.1.0-py3-none-any.whl
 ```
 
-也可以克隆源码后安装。构建依赖使用阿里云源：
+Alternatively, clone the repository and install from source. Build dependencies use the Aliyun PyPI mirror:
 
 ```bash
 git clone https://github.com/Fracizz/nem-db-incremental-core.git
@@ -30,9 +30,9 @@ cd nem-db-incremental-core
 python -m pip install --index-url https://mirrors.aliyun.com/pypi/simple/ .
 ```
 
-当前通过 GitHub 发布源码与制品，未发布到 PyPI。
+Source code and packages are currently distributed through GitHub. The package is not published on PyPI.
 
-## 增量规划示例
+## Incremental backup example
 
 ```python
 from nem_db_incremental_core import (
@@ -59,9 +59,9 @@ assert args == [
 ]
 ```
 
-`available_files` 必须由调用方提供，并按服务端 binlog 顺序排列；规划器以这份清单为依据，不自行查询或证明服务端日志完整性。
+The caller must supply `available_files` in server binlog order. The planner relies on this list; it does not query the server or independently verify the completeness of its logs.
 
-## 恢复链示例
+## Restore chain example
 
 ```python
 from nem_db_incremental_core import BackupPoint, BinlogPosition, plan_restore
@@ -81,52 +81,52 @@ restore = plan_restore([full, incremental], selected_id=2, target_database="busi
 assert [point.id for point in restore] == [1, 2]
 ```
 
-`archive` 仅表示调用方保存的归档标识，规划器不检查归档实物。执行恢复前，调用方必须检查每份归档的存在性和完整性。
+`archive` is an archive identifier supplied by the caller. The planner does not inspect archive contents. Before executing a restore, the caller must verify that every archive exists and passes integrity checks.
 
-增量 ROW 事件内嵌源库名，因此增量链只允许还原到同名数据库；调用方应选择其他实例上的同名空库，避免误写源库。仅全量恢复允许指定其他库名。
+Incremental ROW events contain the source database name, so incremental chains can only be restored to a database with the same name. Use an empty database on another instance to avoid writing to the source database. Full-only restores may use a different database name.
 
-## 对外接口
+## Public API
 
-| 接口 | 用途 |
+| API | Purpose |
 | --- | --- |
-| `BinlogPosition` | 不可变的 binlog 文件名和非负位置 |
-| `IncrementalPlan` | 起点、终点与所需日志文件清单 |
-| `BackupPoint` | 恢复节点：类型、父节点、坐标、状态、归档与链 ID |
-| `IncrementalChainBrokenError` | 无法证明增量链连续时抛出的 `ValueError` 子类 |
-| `parse_snapshot_position(output)` | 解析快照里的 SOURCE / MASTER 坐标；缺失返回 `None` |
-| `decide_backup_mode(...)` | 返回是否执行增量及中文原因；禁止自动转全量时可抛出断链异常 |
-| `plan_incremental_backup(...)` | 检查区间和日志清单，返回增量计划 |
-| `binlog_reader_flags(db_type)` | 返回厂商对应的远程读取参数 |
-| `build_binlog_read_args(db_type, plan)` | 返回不包含凭据的读取参数列表 |
-| `plan_restore(...)` | 校验恢复链，返回按恢复顺序排列的节点元组 |
-| `positions_contiguous(configs, ...)` | 兼容旧字典记录的坐标连续性检查 |
-| `validate_restore_target(...)` | 拒绝增量恢复时改名目标库 |
+| `BinlogPosition` | Immutable binlog filename and nonnegative position |
+| `IncrementalPlan` | Start and end coordinates with the required log files |
+| `BackupPoint` | Restore node: kind, parent, coordinates, status, archive, and chain ID |
+| `IncrementalChainBrokenError` | A `ValueError` subclass raised when incremental continuity cannot be established |
+| `parse_snapshot_position(output)` | Parse SOURCE / MASTER coordinates from a snapshot; return `None` when absent |
+| `decide_backup_mode(...)` | Return an incremental/full decision and a Chinese explanation; raise a chain error when automatic full fallback is disabled |
+| `plan_incremental_backup(...)` | Validate the interval and log list, then return an incremental plan |
+| `binlog_reader_flags(db_type)` | Return vendor-specific remote binlog reader flags |
+| `build_binlog_read_args(db_type, plan)` | Return reader arguments without credentials |
+| `plan_restore(...)` | Validate a restore chain and return its nodes in restore order |
+| `positions_contiguous(configs, ...)` | Check coordinate continuity for legacy dictionary records |
+| `validate_restore_target(...)` | Reject database renaming for incremental restores |
 
-`decide_backup_mode` 的保守策略遇到 binlog 文件变化会转全量；需要允许轮转的调用方可使用规划函数的 `allow_rotation=True`，同时为跨文件恢复节点保存完整 `files` 清单。
+The conservative policy in `decide_backup_mode` switches to a full backup when the binlog filename changes. Callers that support rotation can use `allow_rotation=True` in the planning functions and must record the complete `files` list for restore nodes spanning multiple logs.
 
-## 开发与验证
+## Development and validation
 
-在本仓库根目录执行：
+Run these commands from the repository root:
 
 ```bash
 python -m venv .venv
 # Linux / macOS
 source .venv/bin/activate
-# Windows PowerShell 使用 .venv\Scripts\Activate.ps1
+# On Windows PowerShell, use .venv\Scripts\Activate.ps1
 python -m pip install --index-url https://mirrors.aliyun.com/pypi/simple/ -e '.[dev]'
 python -m pytest -q
 ```
 
-测试不连接数据库或外部服务，覆盖区间校验、厂商参数、自动转全量策略、50 节点恢复链、中间断链及同库多链隔离。单元测试结果不代表真实数据库备份或恢复验收。
+Tests run without database connections or external services. They cover interval validation, vendor-specific arguments, full-backup fallback, a 50-node restore chain, gaps within a chain, and isolation between chains for the same database. Passing unit tests does not establish that backups or restores work against a live database.
 
-使用 uv 构建 wheel 和源码包（`pyproject.toml` 已配置阿里云依赖源）：
+Build the wheel and source distribution with uv. The Aliyun dependency index is configured in `pyproject.toml`:
 
 ```bash
 uv build --wheel --sdist
 ```
 
-报告问题时请提供 Python 版本和可复现的脱敏样例，不提交密码、Token、连接串或真实业务数据。
+When reporting an issue, include your Python version and a reproducible, sanitized example. Do not submit passwords, tokens, connection strings, or real business data.
 
-## 许可证
+## License
 
 [MIT](LICENSE) © 2026 Fracizz
